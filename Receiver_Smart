@@ -1,0 +1,153 @@
+// --- FSO Receiver with Calibration & OLED Display ---
+
+// LIBRARIES
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// PIN DEFINITIONS
+#define SIGNAL_SOLAR_PIN 34  // GPIO34: Signal sensor
+#define OLED_SDA 21          // GPIO21: I2C Data for OLED
+#define OLED_SCL 22          // GPIO22: I2C Clock for OLED
+#define LED_PIN 33           // GPIO33 for LED control
+
+// ADC & VOLTAGE CONSTANTS
+#define ADC_RESOLUTION 4095.0
+#define VREF 3.3
+
+// COMMUNICATION PROTOCOL CONSTANTS
+#define THRESHOLD 0.200
+#define BIT_DURATION 50
+
+// OLED DISPLAY CONSTANTS
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// GLOBAL VARIABLES
+String displayMessage = "";
+float baselineVoltage = 0.0;
+
+void setup() {
+  Serial.begin(115200);
+  analogReadResolution(12);
+
+  // Set the LED pin as an output for PWM
+  pinMode(LED_PIN, OUTPUT);
+  // << ADDED: Ensure LED is off at the start >>
+  analogWrite(LED_PIN, 0);
+
+  // OLED Setup
+  Wire.begin(OLED_SDA, OLED_SCL);
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    while (true);
+  }
+
+  // Show initialization message
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println(F("FSO Receiver Starting..."));
+  display.println(F("Calibrating sensor..."));
+  display.display();
+
+  // Calibrate baseline signal for 5 seconds
+  unsigned long startTime = millis();
+  unsigned long duration = 5000;
+  unsigned long samples = 0;
+  double sumVoltage = 0.0;
+
+  while (millis() - startTime < duration) {
+    int raw = analogRead(SIGNAL_SOLAR_PIN);
+    float voltage = (raw * VREF) / ADC_RESOLUTION;
+    sumVoltage += voltage;
+    samples++;
+    delay(5);
+  }
+
+  baselineVoltage = sumVoltage / samples;
+  Serial.print("Baseline voltage: ");
+  Serial.println(baselineVoltage, 4);
+  Serial.println("FSO Receiver Ready\n");
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setCursor(0, 0);
+  display.println(F("FSO Receiver ON"));
+  display.println(F("Waiting for data..."));
+  display.display();
+}
+
+void loop() {
+  float signalLevel = getCleanSignal();
+
+  if (signalLevel < THRESHOLD) {
+    delay(BIT_DURATION / 2);
+    if (getCleanSignal() >= THRESHOLD) return;
+
+    delay(BIT_DURATION);
+
+    char receivedChar = 0;
+    for (int i = 0; i < 8; i++) {
+      signalLevel = getCleanSignal();
+      int bit = (signalLevel > THRESHOLD) ? 1 : 0;
+      receivedChar = (receivedChar << 1) | bit;
+      delay(BIT_DURATION);
+    }
+
+    Serial.print(receivedChar);
+
+    // --- LED BRIGHTNESS CONTROL ---
+    // If the character is a digit, set brightness
+    if (receivedChar >= '0' && receivedChar <= '9') {
+      // Convert character '0'-'9' to an integer 0-9
+      int brightnessValue = receivedChar - '0';
+      // Map the 0-9 range to the PWM duty cycle range (0-255)
+      int dutyCycle = map(brightnessValue, 0, 9, 0, 255);
+      // Set the LED brightness using analogWrite
+      analogWrite(LED_PIN, dutyCycle);
+    }
+    // << ADDED: Otherwise, turn the LED off >>
+    else {
+      analogWrite(LED_PIN, 0);
+    }
+
+    if (receivedChar == '\n') {
+      displayMessage = "";
+    } else {
+      displayMessage += receivedChar;
+    }
+
+    updateDisplay();
+  }
+}
+
+/**
+ * @brief Calculates signal voltage minus baseline
+ */
+float getCleanSignal() {
+  int rawSignal = analogRead(SIGNAL_SOLAR_PIN);
+  float voltage = (rawSignal * VREF) / ADC_RESOLUTION;
+  float adjusted = voltage - baselineVoltage;
+  if (adjusted < 0) adjusted = 0;
+
+  return adjusted;
+}
+
+/**
+ * @brief Updates OLED display with current message
+ */
+void updateDisplay() {
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.setTextSize(1);
+  display.println(F("--- MESSAGE ---"));
+  display.drawLine(0, 10, display.width() - 1, 10, SSD1306_WHITE);
+  display.setCursor(0, 15);
+  display.setTextSize(2);
+  display.print(displayMessage);
+  display.display();
+}
