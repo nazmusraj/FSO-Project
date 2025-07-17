@@ -1,0 +1,108 @@
+// --- FSO Transmitter (Text / Level / Temp + Hold‑High) -----------------------
+
+// PIN DEFINITIONS
+#define LASER_PIN 2    // Laser driver
+#define SW1_PIN   5    // HIGH → Text, LOW → Sensor (Level or Temp)
+#define SW2_PIN  32    // When SW1 LOW: HIGH → Level, LOW → Temp
+#define HOLD_PIN 33    // NEW: press‑and‑hold → constant HIGH beam, no data
+#define POT_PIN   4    // Potentiometer
+#define TEMP_PIN  0    // Thermistor  (~25–35 °C)
+
+// COMMUNICATION PROTOCOL
+#define BIT_DURATION 50        // ms  (do not reduce)
+const char* TEXT_MSG = "NAZMUS SAKIB";
+
+// ADC (ESP32: 0‑4095)
+const uint16_t ADC_MAX = 4095;
+
+// ---------- Internal mode tracking ----------
+enum TxMode { MODE_TEXT, MODE_LEVEL, MODE_TEMP };
+TxMode lastMode = MODE_TEXT;
+
+// ---------- SETUP ------------------------------------------------------------
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(LASER_PIN, OUTPUT);
+  pinMode(SW1_PIN,  INPUT_PULLUP);
+  pinMode(SW2_PIN,  INPUT_PULLUP);
+  pinMode(HOLD_PIN, INPUT_PULLUP);   // active‑LOW hold button
+  pinMode(POT_PIN,  INPUT);
+  pinMode(TEMP_PIN, INPUT);
+
+  digitalWrite(LASER_PIN, HIGH);     // idle = HIGH (laser ON)
+  lastMode = digitalRead(SW1_PIN) ? MODE_TEXT : MODE_LEVEL;
+  Serial.println("FSO Transmitter Ready.");
+}
+
+// ---------- MAIN LOOP --------------------------------------------------------
+void loop() {
+  /* -------- HOLD‑HIGH OVERRIDE --------
+     If HOLD_PIN is kept LOW, keep the laser continuously ON
+     and skip all transmissions. Release to resume normal operation. */
+  if (digitalRead(HOLD_PIN) == LOW) {
+    digitalWrite(LASER_PIN, HIGH);  // constant light
+    delay(10);                      // debounce / CPU breathing
+    return;                         // skip rest of loop
+  }
+
+  /* ---------- Determine current mode ---------- */
+  TxMode mode;
+  if (digitalRead(SW1_PIN)) {
+    mode = MODE_TEXT;
+  } else {
+    mode = digitalRead(SW2_PIN) ? MODE_LEVEL : MODE_TEMP;
+  }
+
+  /* ---------- On mode change, send tag once ---------- */
+  if (mode != lastMode) {
+    const char* tag = (mode == MODE_LEVEL) ? "levels" : "temp";
+    Serial.print("Mode changed → "); Serial.println(tag);
+    for (uint8_t i = 0; tag[i]; ++i) sendChar(tag[i]);
+    sendChar('\n');
+    lastMode = mode;
+  }
+
+  /* ---------- Handle each mode ---------- */
+  if (mode == MODE_TEXT) {
+    Serial.println("Sending text message...");
+    for (size_t i = 0; TEXT_MSG[i]; ++i) sendChar(TEXT_MSG[i]);
+    sendChar('\n');
+    Serial.println("Done. Pausing 3 s.\n");
+    delay(3000);
+
+  } else if (mode == MODE_LEVEL) {
+    uint16_t raw   = analogRead(POT_PIN);          // 0‑4095
+    uint8_t level  = (raw * 10UL) / (ADC_MAX + 1); // 0‑9
+    sendChar('0' + level);
+    sendChar('\n');
+    delay(50);
+
+  } else { // MODE_TEMP
+    uint16_t raw = analogRead(TEMP_PIN);           // 3100–3250
+    int tempC    = 35 - ((int)raw - 3100) * 10 / 150; // map to 25‑35 °C
+    tempC        = constrain(tempC, 25, 35);
+
+    char buf[4];
+    itoa(tempC, buf, 10);                          // e.g. "28"
+    for (uint8_t i = 0; buf[i]; ++i) sendChar(buf[i]);
+    sendChar('\n');
+    delay(50);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Send one ASCII character: 1 start (LOW) + 8 data bits (MSB→LSB) + 1 stop (HIGH)
+ *---------------------------------------------------------------------------*/
+void sendChar(char ch) {
+  digitalWrite(LASER_PIN, LOW);                    // start bit
+  delay(BIT_DURATION);
+
+  for (int i = 7; i >= 0; --i) {                   // data bits
+    digitalWrite(LASER_PIN, (ch >> i) & 1 ? HIGH : LOW);
+    delay(BIT_DURATION);
+  }
+
+  digitalWrite(LASER_PIN, HIGH);                   // stop / idle
+  delay(BIT_DURATION);
+}
