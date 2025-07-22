@@ -64,11 +64,11 @@ The system operates in two distinct modes, selected by a switch on the transmitt
 ## 🔌 Circuit Diagrams
 
 ### Transmitter Circuit
-*(You should replace the link below with a direct link to your circuit diagram image in the repository)*
+
 ![Transmitter Circuit](https://img.playbook.com/joMSaNov7tMuEzub0HbQTatRxbv_cSckfAIKxMInktM/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljLzc2MTQzNTVi/LWQ0YzAtNDkyYi04/NTZkLTI1NjM4YzE5/ZWM5Nw)
 
 ### Receiver Circuit
-*(You should replace the link below with a direct link to your circuit diagram image in the repository)*
+
 ![Receiver Circuit](https://img.playbook.com/st82JGfJkqgkc4JHLAPcbY1qpv_fK0s1ljVcDrfZgFo/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljLzQ3ZDY4Y2Rm/LTU0NzQtNDhmNS1h/MjdlLTU0MTc0ZDJj/MmNmOA)
 
 ---
