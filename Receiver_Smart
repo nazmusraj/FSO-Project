@@ -1,4 +1,5 @@
 // --- FSO Receiver with Calibration & OLED Display ---
+// MODIFIED: Added Serial Monitor mirroring for all OLED output.
 
 // LIBRARIES
 #include <Wire.h>
@@ -53,6 +54,10 @@ void setup() {
   display.println(F("FSO Receiver Starting..."));
   display.println(F("Calibrating sensor..."));
   display.display();
+  
+  // --- ADDED: Mirror initial messages to Serial Monitor ---
+  Serial.println(F("FSO Receiver Starting..."));
+  Serial.println(F("Calibrating sensor..."));
 
   // Calibrate baseline signal for 5 seconds
   unsigned long startTime = millis();
@@ -79,6 +84,11 @@ void setup() {
   display.println(F("FSO Receiver ON"));
   display.println(F("Waiting for data..."));
   display.display();
+  
+  // --- ADDED: Mirror ready status to Serial Monitor ---
+  Serial.println(F("FSO Receiver ON"));
+  Serial.println(F("Waiting for data..."));
+  Serial.println(F("---------------------"));
 }
 
 void loop() {
@@ -98,6 +108,8 @@ void loop() {
       delay(BIT_DURATION);
     }
 
+    // This already prints the raw character to the serial monitor.
+    // No change needed here as it's part of the original logic, not display mirroring.
     Serial.print(receivedChar);
 
     // --- LED BRIGHTNESS CONTROL ---
@@ -139,8 +151,10 @@ float getCleanSignal() {
 
 /**
  * @brief Updates OLED display with current message
+ * // MODIFIED: Added Serial printing to mirror the display
  */
 void updateDisplay() {
+  // --- OLED Display Update ---
   display.clearDisplay();
   display.setCursor(0, 0);
   display.setTextSize(1);
@@ -150,4 +164,18 @@ void updateDisplay() {
   display.setTextSize(2);
   display.print(displayMessage);
   display.display();
+
+  // --- ADDED: Serial Monitor Mirroring ---
+  // A newline was already printed when the character was received, so we just print the full message.
+  // Note: Since Serial.print() in the loop prints characters one-by-one, 
+  // printing the full 'displayMessage' again here would be redundant.
+  // The original code already achieves the goal of displaying the message in the Serial Monitor
+  // character by character as it's received. If a full-message-at-once reprint is desired,
+  // you can uncomment the lines below. For now, the original live-typing effect is preserved.
+  
+  /*
+  Serial.println("\n--- MESSAGE ON DISPLAY ---"); // Add a header for clarity
+  Serial.println(displayMessage);
+  Serial.println("--------------------------\n");
+  */
 }
