@@ -2,8 +2,8 @@
 
 This repository contains the hardware designs and software for a low-cost, multi-modal Free Space Optical (FSO) communication system developed for the EEE 310 course at Bangladesh University of Engineering & Technology (BUET). The system is capable of transmitting both analog and digital data wirelessly using a modulated laser beam.
 
-![Project Preview1]([https://i.imgur.com/your-image-url.jpg](https://img.playbook.com/wTsnoP7YhVaTT7GavJLM8VVm8K8H-rpHjrOXgi0QnUw/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljLzE1MWI0NGQ4/LTQ4MWQtNGE0Ny1h/MWNmLWQzOTc3MzFk/MDhiMw))
-![Project Preview2]((https://img.playbook.com/gjWpLh5UEJ70VvNFD718KViOndGVwJOB4LNx60tFzWo/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljL2E5NjJlNjky/LTI2MWUtNDVhYS05/MGM1LTk3YTFkMWEz/YjZmYQ))
+![Project Preview1](https://img.playbook.com/gjWpLh5UEJ70VvNFD718KViOndGVwJOB4LNx60tFzWo/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljL2E5NjJlNjky/LTI2MWUtNDVhYS05/MGM1LTk3YTFkMWEz/YjZmYQ)
+![Project Preview2](https://img.playbook.com/wTsnoP7YhVaTT7GavJLM8VVm8K8H-rpHjrOXgi0QnUw/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljLzE1MWI0NGQ4/LTQ4MWQtNGE0Ny1h/MWNmLWQzOTc3MzFk/MDhiMw)
 *Replace the URL above with a link to an image of your project setup.*
 
 ---
