@@ -57,7 +57,7 @@ The system operates in two distinct modes, selected by a switch on the transmitt
 | **Display** | -                                         | OLED Display (SSD1306, 128x64)            |
 | **Driver/Switch** | L293D Motor Driver                        | -                                         |
 | **User Input** | Potentiometer, SPDT Switches, Thermistor  | -                                         |
-| **Power** | 9V Battery, 7805 Voltage Regulator        | 9V Battery, 7805 Voltage Regulator        |
+| **Power** | 7-8V Battery, 7805 Voltage Regulator        | 7-8V Battery, 7805 Voltage Regulator        |
 
 ---
 
