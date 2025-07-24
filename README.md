@@ -13,7 +13,7 @@ This repository contains the hardware designs and software for a low-cost, multi
 This project demonstrates a versatile Free Space Optical (FSO) communication link that uses a laser to transmit various types of data through the air. The system leverages the high bandwidth and security of light-based communication to create a cost-effective wireless link. It supports two primary modes: analog audio transmission via Amplitude Modulation (AM) and digital data transmission using On-Off Keying (OOK). The digital mode is managed by ESP32 microcontrollers. This work covers the system's design, implementation, and performance, highlighting the feasibility of FSO for secure, short-range data links.
 
 ---
-![Flow Diagram](https://img.playbook.com/jSCiHWhv9f0Vl6KF8J4FAy00vopyvy47CHvcUIU3PJw/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljL2QxM2ViYjRl/LTAxZTItNGUwMy1h/YjljLTVhZDMwMjNk/ODEzYQ)
+![Flow Diagram](https://img.playbook.com/oGPEjGmuUlSwaWqbh57YNvAw868yaGIAaBRm6Ue35gM/Z3M6Ly9wbGF5Ym9v/ay1hc3NldHMtcHVi/bGljLzFiM2E0ODE5/LTkyMzEtNDMwZi1i/MjRjLTlhYWNhZWM0/YmEwZA)
 
 ## ✨ Features
 
