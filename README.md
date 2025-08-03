@@ -131,3 +131,6 @@ This project was a collaborative effort by:
 ### Under the Supervision of:
 -   **Dr. Mohammad Faisal**, Professor, Dept. of EEE, BUET
 -   **Archishman Sarkar**, Part-time Lecturer, Dept. of EEE, BUET
+
+To know more about our project in easy way watch this explainer video.
+https://youtu.be/l5IrJoG4t_g
