@@ -133,7 +133,7 @@ This project was a collaborative effort by:
 -   **Archishman Sarkar**, Part-time Lecturer, Dept. of EEE, BUET
   
 
-### To know more about our project in easy way watch this explainer video.
+### To know more about our project in easy way watch these explainer video.
 
 [![Watch the video](https://img.youtube.com/vi/UaMiHPHu-K8/0.jpg)](https://youtu.be/UaMiHPHu-K8)
 
