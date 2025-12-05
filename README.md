@@ -135,7 +135,7 @@ This project was a collaborative effort by:
 
 ### To know more about our project in easy way watch these explainer video.
 
-[![Watch the video](https://img.youtube.com/vi/UaMiHPHu-K8/0.jpg)](https://youtu.be/UaMiHPHu-K8)
+[![Watch the video](https://img.youtube.com/vi/PqKuPC-xE6k/0.jpg)](https://youtu.be/PqKuPC-xE6k)
 
 [![Watch the video](https://img.youtube.com/vi/l5IrJoG4t_g/0.jpg)](https://youtu.be/l5IrJoG4t_g)
 
